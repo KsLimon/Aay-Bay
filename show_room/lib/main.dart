@@ -1,9 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
 import 'package:show_room/screens/home_screen.dart';
 import 'package:show_room/screens/signup.dart';
 import 'package:show_room/services/auth_service.dart';
+
 
 import 'constants.dart';
 
@@ -24,16 +24,10 @@ class _MyAppState extends State<MyApp> {
   AuthClass authClass = AuthClass();
   Widget currentPage = SignUpPage();
 
-  void startBgmMusic() {
-    FlameAudio.bgm.initialize();
-    FlameAudio.bgm.play('Vexento - Strobe (Ft. Katie McConnell)(MP3_128K).mp3');
-  }
-
   @override
   void initState() {
     super.initState();
     // authClass.signOut();
-    startBgmMusic();
     checkLogin();
   }
 

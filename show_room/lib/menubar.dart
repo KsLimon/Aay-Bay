@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:show_room/screens/bills.dart';
 import 'package:show_room/screens/home_screen.dart';
 import 'package:show_room/services/auth_service.dart';
-import 'package:flame_audio/flame_audio.dart';
-
 
 import 'constants.dart';
 import 'main.dart';
@@ -25,7 +23,7 @@ class _CustomAppBarState extends State<menubar>{
   Widget build(BuildContext context){
     return AppBar(
       title: Text(
-        'Home',
+        'Costly',
         style: TextStyle(
           color: knewText,
         ),
@@ -75,30 +73,7 @@ class _CustomAppBarState extends State<menubar>{
                 ),
               ),
             ),
-            PopupMenuItem(
-              child: GestureDetector(
-                onTap: () async{
-                  await FlameAudio.bgm.pause();
-                },
-                child: ListTile(
-                  leading: Icon(Icons.music_off_outlined),
-                  title: Text("Stop Music"),
-                  iconColor: knewText,
-                ),
-              ),
-            ),
-            PopupMenuItem(
-              child: GestureDetector(
-                onTap: () async{
-                  await FlameAudio.bgm.resume();
-                },
-                child: ListTile(
-                  leading: Icon(Icons.music_note_outlined),
-                  title: Text("Resume Music"),
-                  iconColor: knewText,
-                ),
-              ),
-            ),
+
             const PopupMenuDivider(),
             PopupMenuItem(
               child: GestureDetector(

@@ -1,6 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:show_room/screens/personalinfo.dart';
 import 'package:show_room/screens/sighin.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 
@@ -8,17 +8,17 @@ import '../services/auth_service.dart';
 import 'home_screen.dart';
 
 
-class SignUpPage extends StatefulWidget {
-  SignUpPage({Key? key}) : super(key: key);
+class Personalinfo extends StatefulWidget {
+  Personalinfo({Key? key}) : super(key: key);
 
   @override
-  _SignUpPageState createState() => _SignUpPageState();
+  _PersonalinfoState createState() => _PersonalinfoState();
 }
 
-class _SignUpPageState extends State<SignUpPage> {
+class _PersonalinfoState extends State<Personalinfo> {
   firebase_auth.FirebaseAuth firebaseAuth = firebase_auth.FirebaseAuth.instance;
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _pwdController = TextEditingController();
+  TextEditingController _nameController = TextEditingController();
+  TextEditingController _phoneController = TextEditingController();
   bool circular = false;
   AuthClass authClass = AuthClass();
 
@@ -33,7 +33,7 @@ class _SignUpPageState extends State<SignUpPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                  "Sign Up",
+                "Your Profile Info",
                 style: TextStyle(
                   fontSize: 35,
                   fontWeight: FontWeight.bold,
@@ -42,35 +42,39 @@ class _SignUpPageState extends State<SignUpPage> {
               SizedBox(
                 height: 20,
               ),
-              textcell("Email....", _emailController, false),
+              textcell("Name...", _nameController, false),
               SizedBox(
                 height: 15,
               ),
-              textcell("Password...", _pwdController, true),
+              textcell("Phone...", _phoneController, false),
               SizedBox(
                 height: 40,
               ),
               InkWell(
                 onTap: () async {
                   try{
-                    firebase_auth.UserCredential userCredential = await firebaseAuth.createUserWithEmailAndPassword(
-                        email: _emailController.text, password: _pwdController.text
-                    );
-                    authClass.storeTokenAndData(userCredential);
+                    final FirebaseAuth auth = FirebaseAuth.instance;
+                    final User? user = auth.currentUser!;
+                    var totalcollection = FirebaseFirestore.instance.collection('Users').doc(user?.email);
+                    Map<String, dynamic> tamountmap = {
+                      "Name": _nameController.text,
+                      "Phone": _phoneController.text
+                    };
                     setState(() {
                       circular = false;
                     });
+                    totalcollection.set(tamountmap).whenComplete(() => {
                     Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(builder: (builder) => Personalinfo()),
-                            (route) => false);
+                        context, MaterialPageRoute(builder: (builder) => Homescreen()), (route) => false)
+                    });
+
                   }
                   catch (e){
-                     final snackbar = SnackBar(content: Text(e.toString()));
-                     ScaffoldMessenger.of(context).showSnackBar(snackbar);
-                     setState(() {
-                       circular = false;
-                     });
+                    final snackbar = SnackBar(content: Text(e.toString()));
+                    ScaffoldMessenger.of(context).showSnackBar(snackbar);
+                    setState(() {
+                      circular = false;
+                    });
                   }
                 },
                 child: Container(
@@ -102,45 +106,15 @@ class _SignUpPageState extends State<SignUpPage> {
               SizedBox(
                 height: 30,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "If you alredy have an Account? ",
-                    style: TextStyle(
-                      fontSize: 16,
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(builder: (builder) => SignInPage()),
-                              (route) => false);
-                    },
-                    child: Text(
-                      "Login",
-                      style: TextStyle(
-                        color: Colors.deepOrangeAccent,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 60,
-              ),
             ],
           ),
         ),
       ),
     );
   }
-  }
+}
 
-  Widget textcell(String labelText, TextEditingController controller, bool obscureText){
+Widget textcell(String labelText, TextEditingController controller, bool obscureText){
   return Container(
     height: 54,
     width: 325,
@@ -165,4 +139,4 @@ class _SignUpPageState extends State<SignUpPage> {
       ),
     ),
   );
-  }
+}
