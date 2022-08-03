@@ -25,11 +25,20 @@ class _BillscreenState extends State<Billscreen> {
 
   List totallist = [];
   late String username;
+  late String bill;
 
   @override
   void initState() {
     super.initState();
     totalamount();
+    whosbill();
+  }
+
+  whosbill() {
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final User? user = auth.currentUser!;
+    String usr = 'Users', col = 'Bills';
+    bill = '$usr/${user?.email}/$col';
   }
 
   totalamount() async {
@@ -51,7 +60,12 @@ class _BillscreenState extends State<Billscreen> {
   }
   amountUpdate2(var amount){
     setState(() {
-      totallist[0]['amount'] += int.parse(amount);
+      if (totallist.length != 0){
+        totallist[0]['amount'] += int.parse(amount);
+      }
+      else{
+        totallist.add({'amount':int.parse(amount)});
+      }
     },);
   }
 
@@ -104,7 +118,7 @@ class _BillscreenState extends State<Billscreen> {
               child: Stack(
                 children: <Widget>[
                 StreamBuilder(
-                stream: FirebaseFirestore.instance.collection('Bills').snapshots(),
+                stream: FirebaseFirestore.instance.collection(bill).snapshots(),
                 builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (!snapshot.hasData) {
                     return const Center(
@@ -285,34 +299,66 @@ class _BillscreenState extends State<Billscreen> {
           Divider(
             height: 1,
           ),
-          Container(
-            width: MediaQuery.of(context).size.width,
-            height: 50,
-            child: InkWell(
-              highlightColor: Colors.grey[200],
-              onTap: () => {
-                if (pay == "due"){
-                  DatabaseManager().dataupload(id),
-                  Navigator.of(context, rootNavigator: true).pop(),
-                  amountUpdate(amount),
-                }
-                else{
-                  Navigator.of(context, rootNavigator: true).pop(),
-                  showAlertDialog(whopaid),
-                  // showDialog(context: context, builder: Text(document['amount']))
-                }
-              },
-              child: Center(
-                child: Text(
-                  "Continue",
-                  style: TextStyle(
-                    fontSize: 18.0,
-                    color: Theme.of(context).primaryColor,
-                    fontWeight: FontWeight.bold,
+          Row(
+            children:[
+              Container(
+                // width: MediaQuery.of(context).size.width,
+                height: 50,
+                width: 170,
+                // margin: const EdgeInsets.only(
+                //     left: 30, top: 25, right: 10),
+                child: InkWell(
+                  highlightColor: Colors.grey[200],
+                  onTap: () => {
+                    if (pay == "due"){
+                      DatabaseManager().dataupload(id),
+                      Navigator.of(context, rootNavigator: true).pop(),
+                      amountUpdate(amount),
+                    }
+                    else{
+                      Navigator.of(context, rootNavigator: true).pop(),
+                      showAlertDialog(whopaid),
+                      // showDialog(context: context, builder: Text(document['amount']))
+                    }
+                  },
+                  child: Center(
+                    child: Text(
+                      "Continue",
+                      style: TextStyle(
+                        fontSize: 18.0,
+                        color: Theme.of(context).primaryColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
+              Container(
+                // width: MediaQuery.of(context).size.width,
+                height: 50,
+                width: 130,
+                child: InkWell(
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(15.0),
+                    bottomRight: Radius.circular(15.0),
+                  ),
+                  highlightColor: Colors.grey[200],
+                  onTap: () {
+                    Navigator.of(context, rootNavigator: true).pop();
+                  },
+                  child: Center(
+                    child: Text(
+                      "Cancel",
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.normal,
+                        color: Color(0xff800808),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ]
           ),
           Divider(
             height: 1,
@@ -320,6 +366,7 @@ class _BillscreenState extends State<Billscreen> {
           Container(
             width: MediaQuery.of(context).size.width,
             height: 50,
+            // color: Colors.redAccent,
             child: InkWell(
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(15.0),
@@ -328,19 +375,28 @@ class _BillscreenState extends State<Billscreen> {
               highlightColor: Colors.grey[200],
               onTap: () {
                 Navigator.of(context, rootNavigator: true).pop();
+                deleteDialog(id);
               },
-              child: Center(
-                child: Text(
-                  "Cancel",
+              child: const Center(
+                child:
+                // Icon(
+                //   Icons.delete,
+                //   size: 30,
+                //   color: Colors.red,
+                //
+                // )
+                Text(
+                  "Delete Category",
                   style: TextStyle(
                     fontSize: 16.0,
                     fontWeight: FontWeight.normal,
-                    color: Color(0xff800808),
+                    color: Colors.red,
                   ),
                 ),
               ),
             ),
           ),
+
         ],
       ),
     );
@@ -376,6 +432,49 @@ class _BillscreenState extends State<Billscreen> {
       ),
       content: Text(
           "Already paid by ${username}",
+          style: TextStyle(
+            color: Color(0xff000000),
+          )
+      ),
+      actions: [
+        continueButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+  deleteDialog(var doc_id) {
+
+    Widget continueButton = FlatButton(
+      child: Text(
+        "YES",
+        style: TextStyle(
+          fontSize: 18.0,
+          color: Colors.red,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      onPressed:  () {
+        DatabaseManager().deletecat(doc_id);
+        Navigator.of(context, rootNavigator: true).pop();
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      backgroundColor: Color(0xffffffff),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+      title: Text(
+          "Do you want to delete?",
           style: TextStyle(
             color: Color(0xff000000),
           )
@@ -550,7 +649,6 @@ class _BillscreenState extends State<Billscreen> {
                 onTap: () => {
                   DatabaseManager().categoryupload(_nameController.text, _amountController.text),
                   Navigator.of(context, rootNavigator: true).pop(),
-                  amountUpdate2(_amountController.text),
                 },
                 child: Center(
                   child: Text(

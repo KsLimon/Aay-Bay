@@ -3,9 +3,17 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DatabaseManager{
-  final CollectionReference col = FirebaseFirestore.instance.collection('Total');
+
+  late String Bill;
+  late String wallet;
+
+  final FirebaseAuth auth = FirebaseAuth.instance;
 
   Future dataload() async {
+    final User? user = auth.currentUser!;
+    wallet = 'Users/${user?.email}/Total';
+    final CollectionReference col = FirebaseFirestore.instance.collection(wallet);
+
     List itemlist = [];
     try{
       await col.get().then((querySnapshot) {
@@ -21,9 +29,14 @@ class DatabaseManager{
   }
 
   Future dataupload(var id) async {
+    final User? user = auth.currentUser!;
+    Bill = 'Users/${user?.email}/Bills';
+    wallet = 'Users/${user?.email}/Total';
+
     dynamic username = await displayname();
-    var collection = FirebaseFirestore.instance.collection('Bills').doc(id);
-    var totalcollection = FirebaseFirestore.instance.collection('Total').doc('123A');
+
+    var collection = FirebaseFirestore.instance.collection(Bill).doc(id);
+    var totalcollection = FirebaseFirestore.instance.collection(wallet).doc('123A');
     var querySnapshot = await collection.get();
     Map<String, dynamic>? data = querySnapshot.data();
     var amount = data!['amount'];
@@ -56,9 +69,17 @@ class DatabaseManager{
   }
 
   Future totalupload(var amount) async {
-    var totalcollection = FirebaseFirestore.instance.collection('Total').doc('123A');
+    final User? user = auth.currentUser!;
+    wallet = 'Users/${user?.email}/Total';
+    var totalcollection = FirebaseFirestore.instance.collection(wallet).doc('123A');
     dynamic total = await dataload();
-    var totalamount = total[0]['amount'] + int.parse(amount);
+    var totalamount;
+    if (total.length != 0){
+      totalamount = total[0]['amount']  + int.parse(amount);
+    }
+    else{
+      totalamount  = int.parse(amount);
+    }
 
     Map<String, dynamic> tamountmap = {
       "amount": totalamount
@@ -67,7 +88,9 @@ class DatabaseManager{
   }
 
   Future categoryupload(var name, var amount) async {
-    var collection = FirebaseFirestore.instance.collection('Bills').doc();
+    final User? user = auth.currentUser!;
+    Bill = 'Users/${user?.email}/Bills';
+    var collection = FirebaseFirestore.instance.collection(Bill).doc();
 
     Map<String, dynamic> tamountmap = {
       "Name": name,
@@ -76,5 +99,12 @@ class DatabaseManager{
       "Paid by": "Limon",
     };
     collection.set(tamountmap).whenComplete(() => {});
+  }
+
+  Future deletecat(var id) async{
+    final User? user = auth.currentUser!;
+    Bill = 'Users/${user?.email}/Bills';
+    var collection = FirebaseFirestore.instance.collection(Bill);
+    await collection.doc(id).delete();
   }
 }
