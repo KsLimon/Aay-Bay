@@ -28,6 +28,25 @@ class DatabaseManager{
     }
   }
 
+  Future catload() async {
+    final User? user = auth.currentUser!;
+    wallet = 'Users/${user?.email}/dates';
+    final CollectionReference col = FirebaseFirestore.instance.collection(wallet);
+
+    List itemlist = [];
+    try{
+      await col.get().then((querySnapshot) {
+        querySnapshot.docs.forEach((element) {
+          itemlist.add(element.data());
+        });
+      });
+      return itemlist;
+    } catch (e){
+      print(e.toString());
+      return null;
+    }
+  }
+
   Future dataupload(var id) async {
     final User? user = auth.currentUser!;
     Bill = 'Users/${user?.email}/Bills';

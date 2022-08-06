@@ -141,6 +141,9 @@ class _BillscreenState extends State<Billscreen> {
                         ],
                       ),
                       child: GestureDetector(
+                        onLongPress: () => {
+                          deleteDialog(document.id)
+                        },
                         onTap: () => {
                         showDialog(
                         barrierColor: Colors.black26,
@@ -299,74 +302,46 @@ class _BillscreenState extends State<Billscreen> {
           Divider(
             height: 1,
           ),
-          Row(
-            children:[
-              Container(
-                // width: MediaQuery.of(context).size.width,
-                height: 50,
-                width: 170,
-                // margin: const EdgeInsets.only(
-                //     left: 30, top: 25, right: 10),
-                child: InkWell(
-                  highlightColor: Colors.grey[200],
-                  onTap: () => {
-                    if (pay == "due"){
-                      DatabaseManager().dataupload(id),
-                      Navigator.of(context, rootNavigator: true).pop(),
-                      amountUpdate(amount),
-                    }
-                    else{
-                      Navigator.of(context, rootNavigator: true).pop(),
-                      showAlertDialog(whopaid),
-                      // showDialog(context: context, builder: Text(document['amount']))
-                    }
-                  },
-                  child: Center(
-                    child: Text(
-                      "Continue",
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        color: Theme.of(context).primaryColor,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+          Container(
+            // width: MediaQuery.of(context).size.width,
+            height: 50,
+            width: 170,
+            // margin: const EdgeInsets.only(
+            //     left: 30, top: 25, right: 10),
+            child: InkWell(
+              highlightColor: Colors.grey[200],
+              onTap: () => {
+                if (pay == "due"){
+                  DatabaseManager().dataupload(id),
+                  Navigator.of(context, rootNavigator: true).pop(),
+                  amountUpdate(amount),
+                }
+                else{
+                  Navigator.of(context, rootNavigator: true).pop(),
+                  showAlertDialog(whopaid),
+                  // showDialog(context: context, builder: Text(document['amount']))
+                }
+              },
+              child: Center(
+                child: Text(
+                  "Continue",
+                  style: TextStyle(
+                    fontSize: 18.0,
+                    color: Theme.of(context).primaryColor,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
-              Container(
-                // width: MediaQuery.of(context).size.width,
-                height: 50,
-                width: 130,
-                child: InkWell(
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(15.0),
-                    bottomRight: Radius.circular(15.0),
-                  ),
-                  highlightColor: Colors.grey[200],
-                  onTap: () {
-                    Navigator.of(context, rootNavigator: true).pop();
-                  },
-                  child: Center(
-                    child: Text(
-                      "Cancel",
-                      style: TextStyle(
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.normal,
-                        color: Color(0xff800808),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ]
+            ),
           ),
+
           Divider(
             height: 1,
           ),
           Container(
-            width: MediaQuery.of(context).size.width,
+            // width: MediaQuery.of(context).size.width,
             height: 50,
-            // color: Colors.redAccent,
+            width: 130,
             child: InkWell(
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(15.0),
@@ -375,27 +350,52 @@ class _BillscreenState extends State<Billscreen> {
               highlightColor: Colors.grey[200],
               onTap: () {
                 Navigator.of(context, rootNavigator: true).pop();
-                deleteDialog(id);
               },
-              child: const Center(
-                child:
-                // Icon(
-                //   Icons.delete,
-                //   size: 30,
-                //   color: Colors.red,
-                //
-                // )
-                Text(
-                  "Delete Category",
+              child: Center(
+                child: Text(
+                  "Cancel",
                   style: TextStyle(
                     fontSize: 16.0,
                     fontWeight: FontWeight.normal,
-                    color: Colors.red,
+                    color: Color(0xff800808),
                   ),
                 ),
               ),
             ),
           ),
+          // Container(
+          //   width: MediaQuery.of(context).size.width,
+          //   height: 50,
+          //   // color: Colors.redAccent,
+          //   child: InkWell(
+          //     borderRadius: BorderRadius.only(
+          //       bottomLeft: Radius.circular(15.0),
+          //       bottomRight: Radius.circular(15.0),
+          //     ),
+          //     highlightColor: Colors.grey[200],
+          //     onTap: () {
+          //       Navigator.of(context, rootNavigator: true).pop();
+          //       deleteDialog(id);
+          //     },
+          //     child: const Center(
+          //       child:
+          //       // Icon(
+          //       //   Icons.delete,
+          //       //   size: 30,
+          //       //   color: Colors.red,
+          //       //
+          //       // )
+          //       Text(
+          //         "Delete Category",
+          //         style: TextStyle(
+          //           fontSize: 16.0,
+          //           fontWeight: FontWeight.normal,
+          //           color: Colors.red,
+          //         ),
+          //       ),
+          //     ),
+          //   ),
+          // ),
 
         ],
       ),
