@@ -149,7 +149,7 @@ class _BillscreenState extends State<Billscreen> {
                         barrierColor: Colors.black26,
                         context: context,
                         builder: (context) {
-                        return alertbuild(document.id, document['amount'], document['pay'], document['Paid by']);
+                        return alertbuild(document.id, document['amount'], document['pay'], document['Paid by'], document['Name']);
                         },
                         ),
                         },
@@ -176,7 +176,8 @@ class _BillscreenState extends State<Billscreen> {
                               ),
                               Row(
                                 children: [
-                                  Container(
+                                  Flexible(
+                                  child: Container(
                                     height: 30,
                                     width: 150,
                                     margin: const EdgeInsets.only(
@@ -197,8 +198,8 @@ class _BillscreenState extends State<Billscreen> {
                                         color: Color(0xE7FFDCF9),
                                       ),
                                     ),
-                                  ),
-                                  Container(
+                                  ),),
+                                  Flexible(child:Container(
                                     height: 30,
                                     width: 50,
                                     margin: const EdgeInsets.only(
@@ -218,7 +219,7 @@ class _BillscreenState extends State<Billscreen> {
                                         color: Color(0xE7FFDCF9),
                                       ),
                                     ),
-                                  ),
+                                  ),)
                                 ],
                               )
                             ],
@@ -273,7 +274,7 @@ class _BillscreenState extends State<Billscreen> {
     );
   }
   @override
-  alertbuild(var id, var amount, var pay, var whopaid) {
+  alertbuild(var id, var amount, var pay, var whopaid, var scname) {
     return Dialog(
       elevation: 0,
       backgroundColor: Color(0xffffffff),
@@ -313,6 +314,7 @@ class _BillscreenState extends State<Billscreen> {
               onTap: () => {
                 if (pay == "due"){
                   DatabaseManager().dataupload(id),
+                  DatabaseManager().selectedcashout(scname, amount),
                   Navigator.of(context, rootNavigator: true).pop(),
                   amountUpdate(amount),
                 }
@@ -539,6 +541,7 @@ class _BillscreenState extends State<Billscreen> {
               highlightColor: Colors.grey[200],
               onTap: () => {
                 DatabaseManager().totalupload(_totalController.text),
+                DatabaseManager().cashin(_totalController.text, "Monthly cash"),
                 Navigator.of(context, rootNavigator: true).pop(),
                 amountUpdate2(_totalController.text),
               },

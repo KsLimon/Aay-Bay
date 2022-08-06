@@ -20,6 +20,15 @@ class _CustomAppBarState extends State<menubar>{
   AuthClass authClass = AuthClass();
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  onGoBack(dynamic value) {
+    setState(() {});
+  }
+
+  @override
   Widget build(BuildContext context){
     return AppBar(
       title: Text(
@@ -42,7 +51,9 @@ class _CustomAppBarState extends State<menubar>{
             PopupMenuItem(
               child: GestureDetector(
                 onTap: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => Homescreen()));
+                  // Navigator.push(context, MaterialPageRoute(builder: (context) => Homescreen())).then((_) {setState(() {});});
+                  Route route = MaterialPageRoute(builder: (context) => Homescreen());
+                  Navigator.push(context, route).then(onGoBack);
                 },
                 child: ListTile(
                   leading: Icon(Icons.home),
@@ -54,7 +65,9 @@ class _CustomAppBarState extends State<menubar>{
             PopupMenuItem(
               child: GestureDetector(
                 onTap: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => Billscreen()));
+                  // Navigator.push(context, MaterialPageRoute(builder: (context) => Billscreen())).then((_) {setState(() {});});
+                  Route route = MaterialPageRoute(builder: (context) => Billscreen());
+                  Navigator.push(context, route).then(onGoBack);
                 },
                 child: ListTile(
                   leading: Icon(Icons.clear_rounded),

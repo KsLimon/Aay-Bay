@@ -1,11 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 class DatabaseManager{
 
   late String Bill;
   late String wallet;
+  late String dates;
 
   final FirebaseAuth auth = FirebaseAuth.instance;
 
@@ -123,6 +125,76 @@ class DatabaseManager{
   Future deletecat(var id) async{
     final User? user = auth.currentUser!;
     Bill = 'Users/${user?.email}/Bills';
+    var collection = FirebaseFirestore.instance.collection(Bill);
+    await collection.doc(id).delete();
+  }
+
+  Future cashin(var amount, var comment) async {
+    final User? user = auth.currentUser!;
+    wallet = 'Users/${user?.email}/dates';
+    var totalcollection = FirebaseFirestore.instance.collection(wallet).doc();
+
+    DateTime now = DateTime.now();
+    var formattedDate = DateFormat('d,MMM HH:mm a').format(now);
+
+    Map<String, dynamic> tamountmap = {
+      "amount": amount,
+      "Type": 1,
+      "comment": comment,
+      "at": formattedDate,
+    };
+    totalcollection.set(tamountmap).whenComplete(() => {});
+  }
+
+  Future cashout(var name, var amount) async {
+    final User? user = auth.currentUser!;
+
+    dates = 'Users/${user?.email}/dates';
+    wallet = 'Users/${user?.email}/Total';
+    var totaldates = FirebaseFirestore.instance.collection(dates).doc();
+    var totalcollection = FirebaseFirestore.instance.collection(wallet).doc('123A');
+    dynamic total = await dataload();
+    var amnt = int.parse(amount);
+    var totalamount = total[0]['amount'] - amnt;
+
+    DateTime now = DateTime.now();
+    var formattedDate = DateFormat('d,MMM HH:mm a').format(now);
+    Map<String, dynamic> cash = {
+      "amount": amount,
+      "Type": 0,
+      "comment": name,
+      "at": formattedDate,
+    };
+
+
+    Map<String, dynamic> tamountmap = {
+      "amount": totalamount
+    };
+
+    totalcollection.set(tamountmap).whenComplete(() => {});
+    totaldates.set(cash).whenComplete(() => {});
+  }
+
+  Future selectedcashout(var name, var amount) async {
+    final User? user = auth.currentUser!;
+    wallet = 'Users/${user?.email}/dates';
+    var totalcollection = FirebaseFirestore.instance.collection(wallet).doc();
+
+    DateTime now = DateTime.now();
+    var formattedDate = DateFormat('d,MMM HH:mm a').format(now);
+
+    Map<String, dynamic> tamountmap = {
+      "amount": amount,
+      "Type": 0,
+      "comment": name,
+      "at": formattedDate,
+    };
+    totalcollection.set(tamountmap).whenComplete(() => {});
+  }
+
+  Future deletefromlist(var id) async{
+    final User? user = auth.currentUser!;
+    Bill = 'Users/${user?.email}/dates';
     var collection = FirebaseFirestore.instance.collection(Bill);
     await collection.doc(id).delete();
   }
