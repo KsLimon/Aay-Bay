@@ -92,7 +92,8 @@ class _HomescreenState extends State<Homescreen> {
 
   @override
   Widget build(BuildContext context){
-    return Scaffold(
+    return WillPopScope(
+        child: Scaffold(
         appBar: menubar(),
       body: Appback(
         child: Column(
@@ -310,6 +311,10 @@ class _HomescreenState extends State<Homescreen> {
           ],
         ),
       ],
+    ),
+      onWillPop: () async{
+        return false;
+      },
     );
   }
   uptotal() {

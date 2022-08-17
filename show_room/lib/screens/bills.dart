@@ -71,7 +71,8 @@ class _BillscreenState extends State<Billscreen> {
 
   @override
   Widget build(BuildContext context){
-    return Scaffold(
+    return WillPopScope(
+      child: Scaffold(
       appBar: menubar(),
       body: Appback(
         child: Column(
@@ -271,6 +272,10 @@ class _BillscreenState extends State<Billscreen> {
       //       },
       //       child: Icon(Icons.add),),
       // ],
+    ),
+    onWillPop: () async{
+    return false;
+    },
     );
   }
   @override
@@ -365,39 +370,6 @@ class _BillscreenState extends State<Billscreen> {
               ),
             ),
           ),
-          // Container(
-          //   width: MediaQuery.of(context).size.width,
-          //   height: 50,
-          //   // color: Colors.redAccent,
-          //   child: InkWell(
-          //     borderRadius: BorderRadius.only(
-          //       bottomLeft: Radius.circular(15.0),
-          //       bottomRight: Radius.circular(15.0),
-          //     ),
-          //     highlightColor: Colors.grey[200],
-          //     onTap: () {
-          //       Navigator.of(context, rootNavigator: true).pop();
-          //       deleteDialog(id);
-          //     },
-          //     child: const Center(
-          //       child:
-          //       // Icon(
-          //       //   Icons.delete,
-          //       //   size: 30,
-          //       //   color: Colors.red,
-          //       //
-          //       // )
-          //       Text(
-          //         "Delete Category",
-          //         style: TextStyle(
-          //           fontSize: 16.0,
-          //           fontWeight: FontWeight.normal,
-          //           color: Colors.red,
-          //         ),
-          //       ),
-          //     ),
-          //   ),
-          // ),
 
         ],
       ),

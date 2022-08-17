@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:show_room/screens/bazar.dart';
 import 'package:show_room/screens/bills.dart';
 import 'package:show_room/screens/home_screen.dart';
 import 'package:show_room/services/auth_service.dart';
@@ -31,6 +32,7 @@ class _CustomAppBarState extends State<menubar>{
   @override
   Widget build(BuildContext context){
     return AppBar(
+      automaticallyImplyLeading: false,
       title: Text(
         'Costly',
         style: TextStyle(
@@ -51,9 +53,8 @@ class _CustomAppBarState extends State<menubar>{
             PopupMenuItem(
               child: GestureDetector(
                 onTap: (){
-                  // Navigator.push(context, MaterialPageRoute(builder: (context) => Homescreen())).then((_) {setState(() {});});
-                  Route route = MaterialPageRoute(builder: (context) => Homescreen());
-                  Navigator.push(context, route).then(onGoBack);
+                  Navigator.pop(context);
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => Homescreen())).then((value) => setState(() {}));
                 },
                 child: ListTile(
                   leading: Icon(Icons.home),
@@ -65,13 +66,25 @@ class _CustomAppBarState extends State<menubar>{
             PopupMenuItem(
               child: GestureDetector(
                 onTap: (){
-                  // Navigator.push(context, MaterialPageRoute(builder: (context) => Billscreen())).then((_) {setState(() {});});
-                  Route route = MaterialPageRoute(builder: (context) => Billscreen());
-                  Navigator.push(context, route).then(onGoBack);
+                  Navigator.pop(context);
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => Billscreen())).then((value) => setState(() {}));
                 },
                 child: ListTile(
                   leading: Icon(Icons.clear_rounded),
                   title: Text("Monthly Cost"),
+                  iconColor: knewText,
+                ),
+              ),
+            ),
+            PopupMenuItem(
+              child: GestureDetector(
+                onTap: (){
+                  Navigator.pop(context);
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => Bazarscreen())).then((value) => setState(() {}));
+                },
+                child: ListTile(
+                  leading: Icon(Icons.local_grocery_store_outlined),
+                  title: Text("Bazar"),
                   iconColor: knewText,
                 ),
               ),
