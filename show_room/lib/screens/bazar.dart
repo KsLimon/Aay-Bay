@@ -61,38 +61,41 @@ class _BazarscreenState extends State<Bazarscreen> {
                               }
                               return ListView(
                                 children: snapshot.data!.docs.map((document) {
-                                  return GestureDetector(
-                                      onLongPress: () => {},
+                                  return InkWell(
+                                      onLongPress: () => {
+                                        deleteDialog(document.id)
+                                      },
                                       onTap: () => {
                                         showDialog(
                                           barrierColor: Colors.black26,
                                           context: context,
                                           builder: (context) {
-                                            return alertbuild(document.id, document['value'], document['value'], document['check'], document['name']);
+                                            return alertbuild(document.id, document['value'], document['check'], document['name'], document['count']);
                                           },
                                         ),
                                       },
-                                      child:Container( child: Row(
+                                      child:Container(
+                                          child: Row(
                                         // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: <Widget>[
-                                          SizedBox(
+                                        children: [
+                                          const SizedBox(
                                             width: 10,
                                           ),
                                           document["check"] ? Icon(Icons.beenhere, color: Colors.greenAccent,) :Icon(Icons.cancel_outlined, color: Colors.redAccent,),
 
-                                          Flexible(child: Text(
+                                          const Text(
                                             '  ',
                                             style: TextStyle(fontSize: 25),
-                                          ),),
+                                          ),
 
                                           Flexible(child: Text(
-                                            '${document["name"]}',
-                                            style: TextStyle(fontSize: 25),
+                                            '${document["name"]} ~ ${document['count']}',
+                                            style: TextStyle(fontSize: 20),
                                           ),),
 
-                                          Flexible(child: Container(
-                                            height: 30,
-                                            width: 50,
+                                          Container(
+                                            height: 22,
+                                            width: 60,
                                             margin: const EdgeInsets.only(
                                                 left: 15, top: 10),
                                             decoration: const BoxDecoration(
@@ -110,8 +113,8 @@ class _BazarscreenState extends State<Bazarscreen> {
                                                 color: Color(0xE7FFDCF9),
                                               ),
                                             ),
-                                          ),),
-                                          SizedBox(width: 10,)
+                                          ),
+                                          SizedBox(width: 10,),
                                         ],
                                       )));
                                 }).toList(), //akhane
@@ -119,7 +122,25 @@ class _BazarscreenState extends State<Bazarscreen> {
                             }),
                       ],
                     ),
-                  ),])
+                  ),
+                ])
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            showModalBottomSheet(context: context,
+                isScrollControlled: true,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(20),
+                  ),
+                ),
+                backgroundColor: const Color(0xFF06124A),
+                builder: (context) => upcat()
+            );
+          },
+          backgroundColor: Color(0xBAD627D3),
+          tooltip: 'Increment',
+          child: Icon(Icons.add, size: 40,),
         ),
       ),
       onWillPop: () async{
@@ -128,33 +149,45 @@ class _BazarscreenState extends State<Bazarscreen> {
     );
   }
   @override
-  alertbuild(var id, var amount, var pay, var whopaid, var scname) {
+  alertbuild(var id, var amount, var check, var scname, var count) {
+    TextEditingController _totalController = TextEditingController();
     return Dialog(
       elevation: 0,
-      backgroundColor: Color(0xffffffff),
+      backgroundColor: const Color(0xffffffff),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15.0),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(height: 15),
+          const SizedBox(height: 15),
           Text(
-            "Make Sure",
-            style: TextStyle(
+            "$scname",
+            style: const TextStyle(
               fontSize: 18.0,
               fontWeight: FontWeight.bold,
               color: Color(0xff000000),
             ),
           ),
-          SizedBox(height: 15),
-          Text("Would you like to continue?",
+          const SizedBox(height: 15),
+          const Text("Write how many you paid:",
               style: TextStyle(
                 color: Color(0xff000000),
               )
           ),
-          SizedBox(height: 20),
-          Divider(
+          const SizedBox(height: 20),
+          TextField(
+            controller: _totalController,
+            style: TextStyle(color: Colors.black, fontSize: 20),
+            decoration: const InputDecoration(
+              hintText: "123...",
+              hintStyle: TextStyle(
+                color: Color(0xFF181642),
+                fontSize: 17,
+              ),
+            ),
+          ),
+          const Divider(
             height: 1,
           ),
           Container(
@@ -166,17 +199,9 @@ class _BazarscreenState extends State<Bazarscreen> {
             child: InkWell(
               highlightColor: Colors.grey[200],
               onTap: () => {
-                if (pay == "due"){
-                  DatabaseManager().dataupload(id),
-                  DatabaseManager().selectedcashout(scname, amount),
-                  Navigator.of(context, rootNavigator: true).pop(),
-                  // amountUpdate(amount),
-                }
-                else{
-                  Navigator.of(context, rootNavigator: true).pop(),
-                  // showAlertDialog(whopaid),
-                  // showDialog(context: context, builder: Text(document['amount']))
-                }
+                DatabaseManager().bazarupload(_totalController.text, id, scname, count),
+                Navigator.of(context, rootNavigator: true).pop(),
+                // amountUpdate2(_totalController.text),
               },
               child: Center(
                 child: Text(
@@ -204,15 +229,16 @@ class _BazarscreenState extends State<Bazarscreen> {
                 bottomRight: Radius.circular(15.0),
               ),
               highlightColor: Colors.grey[200],
-              onTap: () {
-                Navigator.of(context, rootNavigator: true).pop();
+              onTap: () => {
+                DatabaseManager().undobazar(_totalController.text, id, scname, count),
+                Navigator.of(context, rootNavigator: true).pop(),
               },
               child: Center(
                 child: Text(
-                  "Cancel",
+                  "Not Done",
                   style: TextStyle(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.normal,
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.bold,
                     color: Color(0xff800808),
                   ),
                 ),
@@ -221,6 +247,179 @@ class _BazarscreenState extends State<Bazarscreen> {
           ),
         ],
       ),
+    );
+  }
+
+  upcat() {
+    TextEditingController _nameController = TextEditingController();
+    TextEditingController _amountController = TextEditingController();
+    TextEditingController _countController = TextEditingController();
+    return Container(
+
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const SizedBox(height: 15),
+          const Text(
+            "Add to Bazar list",
+            style: TextStyle(
+              fontSize: 18.0,
+              fontWeight: FontWeight.bold,
+              color: Color(0xE7FFDCF9),
+            ),
+          ),
+          const SizedBox(height: 15),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            child: TextFormField(
+              controller: _nameController,
+              decoration: const InputDecoration(
+                labelText: "name",
+                labelStyle: TextStyle(
+                  color: Color(0xE7FFDCF9),
+                  fontSize: 17,
+                ),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Color(0xE7FFDCF9), width: 1),
+                ),
+              ),
+            ),),
+          const SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            child: TextFormField(
+              controller: _amountController,
+              decoration: const InputDecoration(
+                labelText: "amount",
+                labelStyle: TextStyle(
+                  color: Color(0xE7FFDCF9),
+                  fontSize: 17,
+                ),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Color(0xE7FFDCF9), width: 1),
+                ),
+              ),
+            ),),
+          const SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            child: TextFormField(
+              controller: _countController,
+              decoration: const InputDecoration(
+                labelText: "count",
+                labelStyle: TextStyle(
+                  color: Color(0xE7FFDCF9),
+                  fontSize: 17,
+                ),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Color(0xE7FFDCF9), width: 1),
+                ),
+              ),
+            ),),
+          const Divider(
+            height: 1,
+          ),
+          const SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: 50,
+              child: InkWell(
+                highlightColor: Colors.grey[200],
+                onTap: () => {
+                  DatabaseManager().addto_bazar(_nameController.text, _amountController.text, _countController.text),
+                  Navigator.of(context, rootNavigator: true).pop(),
+                },
+                child: Center(
+                  child: Text(
+                    "Continue",
+                    style: TextStyle(
+                      fontSize: 18.0,
+                      color: Theme.of(context).primaryColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ),),
+
+          const Divider(
+            height: 1,
+          ),
+          const SizedBox(height: 20),
+          Padding(
+            padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom),
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: 50,
+              child: InkWell(
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(15.0),
+                  bottomRight: Radius.circular(15.0),
+                ),
+                highlightColor: Colors.grey[200],
+                onTap: () {
+                  Navigator.of(context, rootNavigator: true).pop();
+                },
+                child: const Center(
+                  child: Text(
+                    "Cancel",
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.normal,
+                      color: Color(0xff800808),
+                    ),
+                  ),
+                ),
+              ),
+            ),),
+
+        ],
+      ),
+    );
+  }
+  deleteDialog(var doc_id) {
+
+    Widget continueButton = FlatButton(
+      child: const Text(
+        "YES",
+        style: TextStyle(
+          fontSize: 18.0,
+          color: Colors.red,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      onPressed:  () {
+        DatabaseManager().deletebazar(doc_id);
+        Navigator.of(context, rootNavigator: true).pop();
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      backgroundColor: Color(0xffffffff),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+      title: const Text(
+          "Do you want to delete?",
+          style: TextStyle(
+            color: Color(0xff000000),
+          )
+      ),
+      actions: [
+        continueButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
     );
   }
 }

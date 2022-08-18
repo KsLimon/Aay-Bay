@@ -8,6 +8,7 @@ class DatabaseManager{
   late String Bill;
   late String wallet;
   late String dates;
+  late String Bazar;
 
   final FirebaseAuth auth = FirebaseAuth.instance;
 
@@ -196,6 +197,56 @@ class DatabaseManager{
     final User? user = auth.currentUser!;
     Bill = 'Users/${user?.email}/dates';
     var collection = FirebaseFirestore.instance.collection(Bill);
+    await collection.doc(id).delete();
+  }
+
+  //BAZAR PAGE DATABASE
+
+  Future bazarupload(var amount, var id, var name, var count) async {
+    final User? user = auth.currentUser!;
+    wallet = 'Users/${user?.email}/bazar';
+    var bazarcollection = FirebaseFirestore.instance.collection(wallet).doc(id);
+
+    Map<String, dynamic> tamountmap = {
+      "name": name,
+      "check": true,
+      "value": amount,
+      "count": count,
+    };
+    bazarcollection.set(tamountmap).whenComplete(() => {});
+  }
+  Future undobazar(var amount, var id, var name, var count) async {
+    final User? user = auth.currentUser!;
+    wallet = 'Users/${user?.email}/bazar';
+    var bazarcollection = FirebaseFirestore.instance.collection(wallet).doc(id);
+
+    Map<String, dynamic> tamountmap = {
+      "name": name,
+      "check": false,
+      "value": amount,
+      "count": count,
+    };
+    bazarcollection.set(tamountmap).whenComplete(() => {});
+  }
+
+  Future addto_bazar(var name, var amount, var count) async {
+    final User? user = auth.currentUser!;
+    Bazar = 'Users/${user?.email}/bazar';
+    var collection = FirebaseFirestore.instance.collection(Bazar).doc();
+
+    Map<String, dynamic> tamountmap = {
+      "name": name,
+      "value": int.parse(amount),
+      "check": false,
+      "count": count,
+
+    };
+    collection.set(tamountmap).whenComplete(() => {});
+  }
+  Future deletebazar(var id) async{
+    final User? user = auth.currentUser!;
+    Bazar = 'Users/${user?.email}/bazar';
+    var collection = FirebaseFirestore.instance.collection(Bazar);
     await collection.doc(id).delete();
   }
 }

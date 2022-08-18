@@ -79,7 +79,7 @@ class _BillscreenState extends State<Billscreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
 
-            GestureDetector(
+            InkWell(
               onTap: () => {
                 showDialog(
                   barrierColor: Colors.black26,
@@ -141,7 +141,7 @@ class _BillscreenState extends State<Billscreen> {
                         )
                         ],
                       ),
-                      child: GestureDetector(
+                      child: InkWell(
                         onLongPress: () => {
                           deleteDialog(document.id)
                         },
@@ -234,44 +234,55 @@ class _BillscreenState extends State<Billscreen> {
                 ],
               ),
             ),
-            Container(
-              child: TextButton(
-                onPressed: () {
-                  showModalBottomSheet(context: context,
-                      isScrollControlled: true,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(20),
-                        ),
-                      ),
-                      backgroundColor: Color(0xFF06124A),
-                      builder: (context) => upcat()
-                  );
-                },
-                child: const Icon(
-                  Icons.add_circle_outlined,
-                  color: Color(0xBAD627D3),
-                  size: 60,
-                ),
-                style: TextButton.styleFrom(
-                  padding: EdgeInsets.only(left: 300),
-                  // backgroundColor: Color(0xBAD627D3),
-                  minimumSize: Size(80, 60),
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  alignment: Alignment.center,
-                ),
-                
-              ),
-            )
+            // Container(
+            //   child: TextButton(
+            //     onPressed: () {
+            //       showModalBottomSheet(context: context,
+            //           isScrollControlled: true,
+            //           shape: RoundedRectangleBorder(
+            //             borderRadius: BorderRadius.vertical(
+            //               top: Radius.circular(20),
+            //             ),
+            //           ),
+            //           backgroundColor: Color(0xFF06124A),
+            //           builder: (context) => upcat()
+            //       );
+            //     },
+            //     child: const Icon(
+            //       Icons.add_circle_outlined,
+            //       color: Color(0xBAD627D3),
+            //       size: 60,
+            //     ),
+            //     style: TextButton.styleFrom(
+            //       padding: EdgeInsets.only(left: 300),
+            //       // backgroundColor: Color(0xBAD627D3),
+            //       minimumSize: Size(80, 60),
+            //       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            //       alignment: Alignment.center,
+            //     ),
+            //
+            //   ),
+            // )
           ],
         ),
       ),
-      // persistentFooterButtons: [
-      //   TextButton(
-      //       onPressed: () {
-      //       },
-      //       child: Icon(Icons.add),),
-      // ],
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            showModalBottomSheet(context: context,
+                isScrollControlled: true,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(20),
+                  ),
+                ),
+                backgroundColor: const Color(0xFF06124A),
+                builder: (context) => upcat()
+            );
+          },
+          backgroundColor: Color(0xBAD627D3),
+          tooltip: 'Increment',
+          child: Icon(Icons.add, size: 40,),
+        ),
     ),
     onWillPop: () async{
     return false;

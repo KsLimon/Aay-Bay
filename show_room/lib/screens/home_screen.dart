@@ -127,7 +127,7 @@ class _HomescreenState extends State<Homescreen> {
                                 ],
                               ),
 
-                              child: GestureDetector(
+                              child: InkWell(
                                 onLongPress: () => {
                                   deleteDialog(document.id)
                                 },
@@ -208,7 +208,7 @@ class _HomescreenState extends State<Homescreen> {
                 ],
               ),
             ),
-            GestureDetector(
+            InkWell(
               onTap: () => {
               },
               child: Container(
@@ -444,7 +444,7 @@ class _HomescreenState extends State<Homescreen> {
         children: [
           const SizedBox(height: 15),
           const Text(
-            "Cash Entry",
+            "Cash Out",
             style: TextStyle(
               fontSize: 18.0,
               fontWeight: FontWeight.bold,
