@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:show_room/screens/sighin.dart';
 import 'package:show_room/screens/signup.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 
 import '../services/auth_service.dart';
-import 'forgetpass.dart';
 import 'home_screen.dart';
 
 
-class SignInPage extends StatefulWidget {
-  SignInPage({Key? key}) : super(key: key);
+class ForgetPass extends StatefulWidget {
+  ForgetPass({Key? key}) : super(key: key);
 
   @override
-  _SignInPageState createState() => _SignInPageState();
+  _ForgetPassState createState() => _ForgetPassState();
 }
 
-class _SignInPageState extends State<SignInPage> {
+class _ForgetPassState extends State<ForgetPass> {
   firebase_auth.FirebaseAuth firebaseAuth = firebase_auth.FirebaseAuth.instance;
   TextEditingController _emailController = TextEditingController();
   TextEditingController _pwdController = TextEditingController();
@@ -32,8 +32,8 @@ class _SignInPageState extends State<SignInPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                "Sign In",
+              const Text(
+                "Reset Your Password",
                 style: TextStyle(
                   fontSize: 35,
                   fontWeight: FontWeight.bold,
@@ -46,31 +46,30 @@ class _SignInPageState extends State<SignInPage> {
               SizedBox(
                 height: 15,
               ),
-              textcell("Password...", _pwdController, true),
-              SizedBox(
-                height: 40,
-              ),
               InkWell(
                 onTap: () async {
                   try{
-                    firebase_auth.UserCredential userCredential = await firebaseAuth.signInWithEmailAndPassword(
-                        email: _emailController.text, password: _pwdController.text
+
+                    showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (context)=> Center(child: CircularProgressIndicator()),
                     );
-                    authClass.storeTokenAndData(userCredential);
-                    setState(() {
-                      circular = false;
-                    });
+
+                    await firebase_auth.FirebaseAuth.instance.sendPasswordResetEmail(email: _emailController.text.trim());
+
+                    final snackbar = SnackBar(content: Text("Check your email inbox or spam."));
+                    ScaffoldMessenger.of(context).showSnackBar(snackbar);
+                    Navigator.of(context).popUntil((route) => route.isFirst);
                     Navigator.pushAndRemoveUntil(
                         context,
-                        MaterialPageRoute(builder: (builder) => Homescreen()),
+                        MaterialPageRoute(builder: (builder) => SignInPage()),
                             (route) => false);
                   }
-                  catch (e){
+                  on firebase_auth.FirebaseAuthException catch (e){
                     final snackbar = SnackBar(content: Text(e.toString()));
                     ScaffoldMessenger.of(context).showSnackBar(snackbar);
-                    setState(() {
-                      circular = false;
-                    });
+                    Navigator.of(context).pop();
                   }
                 },
                 child: Container(
@@ -90,7 +89,7 @@ class _SignInPageState extends State<SignInPage> {
                     child: circular
                         ? CircularProgressIndicator()
                         : Text(
-                      "LogIn",
+                      "Reset Password",
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w500,
@@ -98,60 +97,6 @@ class _SignInPageState extends State<SignInPage> {
                     ),
                   ),
                 ),
-              ),
-              SizedBox(
-                height: 30,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "I Don't Have Any Account?",
-                    style: TextStyle(
-                      fontSize: 16,
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(builder: (builder) => SignUpPage()),
-                              (route) => false);
-                    },
-                    child: Text(
-                      "Sign Up",
-                      style: TextStyle(
-                        color: Colors.deepOrangeAccent,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  InkWell(
-                    onTap: () {
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(builder: (builder) => ForgetPass()),
-                              (route) => false);
-                    },
-                    child: Text(
-                      "Forgot Password",
-                      style: TextStyle(
-                        color: Colors.deepOrangeAccent,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ],
               ),
             ],
           ),
