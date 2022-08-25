@@ -353,29 +353,35 @@ class _BillscreenState extends State<Billscreen> {
             ),
           ),
 
-          Divider(
+          const Divider(
             height: 1,
           ),
+
           Container(
             // width: MediaQuery.of(context).size.width,
             height: 50,
-            width: 130,
+            width: 170,
+            // margin: const EdgeInsets.only(
+            //     left: 30, top: 25, right: 10),
             child: InkWell(
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(15.0),
-                bottomRight: Radius.circular(15.0),
-              ),
               highlightColor: Colors.grey[200],
-              onTap: () {
-                Navigator.of(context, rootNavigator: true).pop();
+              onTap: () => {
+                if (pay == "paid"){
+                  DatabaseManager().makedue(id),
+                  Navigator.of(context, rootNavigator: true).pop(),
+                }
+                else{
+                  Navigator.of(context, rootNavigator: true).pop(),
+                  // showDialog(context: context, builder: Text(document['amount']))
+                }
               },
               child: Center(
                 child: Text(
-                  "Cancel",
+                  "Make Due",
                   style: TextStyle(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.normal,
+                    fontSize: 18.0,
                     color: Color(0xff800808),
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),

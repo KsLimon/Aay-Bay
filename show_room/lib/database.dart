@@ -80,6 +80,25 @@ class DatabaseManager{
     collection.set(cost).whenComplete(() => {});
   }
 
+  Future makedue(var id) async {
+    final User? user = auth.currentUser!;
+    Bill = 'Users/${user?.email}/Bills';
+    dynamic username = await displayname();
+
+    var collection = FirebaseFirestore.instance.collection(Bill).doc(id);
+    var querySnapshot = await collection.get();
+    Map<String, dynamic>? data = querySnapshot.data();
+
+    Map<String, dynamic> cost = {
+      "Name": data!['Name'],
+      "amount": data['amount'],
+      "pay": "due",
+      "Paid by": username,
+    };
+
+    collection.set(cost).whenComplete(() => {});
+  }
+
   Future displayname() async {
     final FirebaseAuth auth = FirebaseAuth.instance;
     final User? user = auth.currentUser!;

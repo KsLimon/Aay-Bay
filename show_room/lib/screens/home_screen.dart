@@ -39,7 +39,6 @@ class _HomescreenState extends State<Homescreen> {
     // print(ss);
     DateTime now = DateTime.now();
     var formattedDate = DateFormat('d,MMM HH:mm a').format(now);
-    print(formattedDate);
   }
 
   totalamount() async {
