@@ -25,20 +25,9 @@ class _HomescreenState extends State<Homescreen> {
   @override
   void initState() {
     super.initState();
-    printdate();
     whosbill();
     totalamount();
     catloading();
-  }
-
-  printdate(){
-    // DateTime now = DateTime.now();
-    // var newDt = DateFormat.yMMMMd().format(now);
-    // print(newDt);
-    // var ss = DateFormat.yMd().add_jm().format(now);
-    // print(ss);
-    DateTime now = DateTime.now();
-    var formattedDate = DateFormat('d,MMM HH:mm a').format(now);
   }
 
   totalamount() async {
@@ -291,7 +280,9 @@ class _HomescreenState extends State<Homescreen> {
                       ),
                     ),
                     backgroundColor: Color(0xFF203AA4),
-                    builder: (context) => uptotal()
+                  builder: (context) {
+                    return uptotal();
+                  },
                 );
               },
               child: Row(
@@ -316,6 +307,7 @@ class _HomescreenState extends State<Homescreen> {
       },
     );
   }
+
   uptotal() {
     TextEditingController _totalController = TextEditingController();
     TextEditingController _coment = TextEditingController();
@@ -381,7 +373,7 @@ class _HomescreenState extends State<Homescreen> {
                 onTap: () => {
                   DatabaseManager().totalupload(_totalController.text),
                   DatabaseManager().cashin(_totalController.text, _coment.text),
-                  Navigator.of(context, rootNavigator: true).pop(),
+                  Navigator.of(context).pop(),
                   amountUpdate2(_totalController.text),
                 },
                 child: Center(
@@ -414,7 +406,7 @@ class _HomescreenState extends State<Homescreen> {
                 ),
                 highlightColor: Colors.grey[200],
                 onTap: () {
-                  Navigator.of(context, rootNavigator: true).pop();
+                  Navigator.of(context).pop();
                 },
                 child: const Center(
                   child: Text(
@@ -495,7 +487,7 @@ class _HomescreenState extends State<Homescreen> {
                 highlightColor: Colors.grey[200],
                 onTap: () => {
                   DatabaseManager().cashout(_nameController.text, _amountController.text),
-                  Navigator.of(context, rootNavigator: true).pop(),
+                  Navigator.of(context).pop(),
                   amountUpdate(_amountController.text),
                 },
                 child: Center(
@@ -528,7 +520,7 @@ class _HomescreenState extends State<Homescreen> {
                 ),
                 highlightColor: Colors.grey[200],
                 onTap: () {
-                  Navigator.of(context, rootNavigator: true).pop();
+                  Navigator.of(context).pop();
                 },
                 child: const Center(
                   child: Text(

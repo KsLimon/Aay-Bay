@@ -25,10 +25,42 @@ class _BazarscreenState extends State<Bazarscreen> {
   AuthClass authClass = AuthClass();
   bool isChecked = false;
   late String bazar;
+  List totallist = [];
 
   void initState() {
     super.initState();
     whosbazar();
+    totalamount();
+  }
+
+  totalamount() async {
+    dynamic total = await DatabaseManager().dataload();
+    if (total==null){
+      print("unable to retrive");
+    }
+    else{
+      setState(() {
+        totallist = total;
+      });
+    }
+  }
+
+  amountUpdate(var amount){
+    setState(() {
+      if (totallist.length != 0){
+        totallist[1]['amount'] += int.parse(amount);
+      }
+      else{
+        totallist.add({'amount':int.parse(amount)});
+      }
+    },);
+  }
+
+  amountUpdate2(){
+    setState(() {
+      int x = totallist[1]['amount'];
+      totallist[1]['amount'] -= x;
+    },);
   }
 
   whosbazar() {
@@ -123,6 +155,34 @@ class _BazarscreenState extends State<Bazarscreen> {
                       ],
                     ),
                   ),
+                  InkWell(
+                    onTap: () => {
+                      savetotalDialog()
+                    },
+                    child: Container(
+                      width: 280,
+                      decoration: BoxDecoration(
+                        color: kBackgrondColor,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [BoxShadow(
+                          offset: Offset(3, 3),
+                          blurRadius: 10,
+                          color: Colors.black, // Black color with 12% opacity
+                        )],
+                      ),
+                      child: Text(
+                        // 'In Wallet: ${totallist[0]['amount']}',
+                        'Total Cost: ${(totallist.length > 0 ? totallist[1]['amount']:'')}',
+                        // 'Total Cost',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 25,
+                          color: Color(0xBAD627D3),
+                        ),
+                      ),
+                    ),
+                  ),
                 ])
         ),
         floatingActionButton: FloatingActionButton(
@@ -200,6 +260,8 @@ class _BazarscreenState extends State<Bazarscreen> {
               highlightColor: Colors.grey[200],
               onTap: () => {
                 DatabaseManager().bazarupload(_totalController.text, id, scname, count),
+                DatabaseManager().totalbazar(_totalController.text),
+                amountUpdate(_totalController.text),
                 Navigator.of(context, rootNavigator: true).pop(),
                 // amountUpdate2(_totalController.text),
               },
@@ -405,6 +467,51 @@ class _BazarscreenState extends State<Bazarscreen> {
       ),
       title: const Text(
           "Do you want to delete?",
+          style: TextStyle(
+            color: Color(0xff000000),
+          )
+      ),
+      actions: [
+        continueButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+  savetotalDialog() {
+
+    Widget continueButton = FlatButton(
+      child: const Text(
+        "YES",
+        style: TextStyle(
+          fontSize: 18.0,
+          color: Colors.red,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      onPressed:  () {
+        DatabaseManager().cashout("Total Bazar", totallist[1]['amount']);
+        DatabaseManager().refreshbazartotal();
+        amountUpdate2();
+        Navigator.of(context, rootNavigator: true).pop();
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      backgroundColor: Color(0xffffffff),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+      title: const Text(
+          "Do you want to save and clear the total cost section?",
           style: TextStyle(
             color: Color(0xff000000),
           )

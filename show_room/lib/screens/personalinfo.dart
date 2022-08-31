@@ -56,13 +56,20 @@ class _PersonalinfoState extends State<Personalinfo> {
                     final FirebaseAuth auth = FirebaseAuth.instance;
                     final User? user = auth.currentUser!;
                     var totalcollection = FirebaseFirestore.instance.collection('Users').doc(user?.email);
+                    var totalA = FirebaseFirestore.instance.collection('Users/${user?.email}/Total').doc('123A');
+                    var totalB = FirebaseFirestore.instance.collection('Users/${user?.email}/Total').doc('123B');
                     Map<String, dynamic> tamountmap = {
                       "Name": _nameController.text,
                       "Phone": _phoneController.text
                     };
-                    setState(() {
-                      circular = false;
-                    });
+                    Map<String, dynamic> ta = {
+                      "amount": 0
+                    };
+                    Map<String, dynamic> tb = {
+                      "amount": 0
+                    };
+                    totalA.set(ta).whenComplete(() => {});
+                    totalB.set(tb).whenComplete(() => {});
                     totalcollection.set(tamountmap).whenComplete(() => {
                     Navigator.pushAndRemoveUntil(
                         context, MaterialPageRoute(builder: (builder) => Homescreen()), (route) => false)

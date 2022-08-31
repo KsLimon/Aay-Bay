@@ -234,35 +234,6 @@ class _BillscreenState extends State<Billscreen> {
                 ],
               ),
             ),
-            // Container(
-            //   child: TextButton(
-            //     onPressed: () {
-            //       showModalBottomSheet(context: context,
-            //           isScrollControlled: true,
-            //           shape: RoundedRectangleBorder(
-            //             borderRadius: BorderRadius.vertical(
-            //               top: Radius.circular(20),
-            //             ),
-            //           ),
-            //           backgroundColor: Color(0xFF06124A),
-            //           builder: (context) => upcat()
-            //       );
-            //     },
-            //     child: const Icon(
-            //       Icons.add_circle_outlined,
-            //       color: Color(0xBAD627D3),
-            //       size: 60,
-            //     ),
-            //     style: TextButton.styleFrom(
-            //       padding: EdgeInsets.only(left: 300),
-            //       // backgroundColor: Color(0xBAD627D3),
-            //       minimumSize: Size(80, 60),
-            //       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            //       alignment: Alignment.center,
-            //     ),
-            //
-            //   ),
-            // )
           ],
         ),
       ),

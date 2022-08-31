@@ -174,7 +174,7 @@ class DatabaseManager{
     var totaldates = FirebaseFirestore.instance.collection(dates).doc();
     var totalcollection = FirebaseFirestore.instance.collection(wallet).doc('123A');
     dynamic total = await dataload();
-    var amnt = int.parse(amount);
+    var amnt = amount;
     var totalamount = total[0]['amount'] - amnt;
 
     DateTime now = DateTime.now();
@@ -267,5 +267,35 @@ class DatabaseManager{
     Bazar = 'Users/${user?.email}/bazar';
     var collection = FirebaseFirestore.instance.collection(Bazar);
     await collection.doc(id).delete();
+  }
+
+  Future totalbazar(var amount) async {
+    final User? user = auth.currentUser!;
+    wallet = 'Users/${user?.email}/Total';
+    var totalcollection = FirebaseFirestore.instance.collection(wallet).doc('123B');
+    dynamic total = await dataload();
+    var totalamount;
+    if (total.length != 0){
+      totalamount = total[1]['amount']  + int.parse(amount);
+    }
+    else{
+      totalamount  = int.parse(amount);
+    }
+
+    Map<String, dynamic> tamountmap = {
+      "amount": totalamount
+    };
+    totalcollection.set(tamountmap).whenComplete(() => {});
+  }
+
+  Future refreshbazartotal() async {
+    final User? user = auth.currentUser!;
+    wallet = 'Users/${user?.email}/Total';
+    var totalcollection = FirebaseFirestore.instance.collection(wallet).doc('123B');
+
+    Map<String, dynamic> tamountmap = {
+      "amount": 0
+    };
+    totalcollection.set(tamountmap).whenComplete(() => {});
   }
 }
