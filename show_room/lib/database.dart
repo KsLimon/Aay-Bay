@@ -175,7 +175,7 @@ class DatabaseManager{
     var totalcollection = FirebaseFirestore.instance.collection(wallet).doc('123A');
     dynamic total = await dataload();
     var amnt = amount;
-    var totalamount = total[0]['amount'] - amnt;
+    var totalamount = total[0]['amount'] - int.parse(amnt);
 
     DateTime now = DateTime.now();
     var formattedDate = DateFormat('d,MMM HH:mm a').format(now);
@@ -297,5 +297,33 @@ class DatabaseManager{
       "amount": 0
     };
     totalcollection.set(tamountmap).whenComplete(() => {});
+  }
+  Future cashout2(var name, var amount) async {
+    final User? user = auth.currentUser!;
+
+    dates = 'Users/${user?.email}/dates';
+    wallet = 'Users/${user?.email}/Total';
+    var totaldates = FirebaseFirestore.instance.collection(dates).doc();
+    var totalcollection = FirebaseFirestore.instance.collection(wallet).doc('123A');
+    dynamic total = await dataload();
+    var amnt = amount;
+    var totalamount = total[0]['amount'] - amnt;
+
+    DateTime now = DateTime.now();
+    var formattedDate = DateFormat('d,MMM HH:mm a').format(now);
+    Map<String, dynamic> cash = {
+      "amount": amount,
+      "Type": 0,
+      "comment": name,
+      "at": formattedDate,
+    };
+
+
+    Map<String, dynamic> tamountmap = {
+      "amount": totalamount
+    };
+
+    totalcollection.set(tamountmap).whenComplete(() => {});
+    totaldates.set(cash).whenComplete(() => {});
   }
 }

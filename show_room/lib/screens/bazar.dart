@@ -497,7 +497,7 @@ class _BazarscreenState extends State<Bazarscreen> {
         ),
       ),
       onPressed:  () {
-        DatabaseManager().cashout("Total Bazar", totallist[1]['amount']);
+        DatabaseManager().cashout2("Total Bazar", totallist[1]['amount']);
         DatabaseManager().refreshbazartotal();
         amountUpdate2();
         Navigator.of(context, rootNavigator: true).pop();
